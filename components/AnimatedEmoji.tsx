@@ -16,7 +16,7 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
       return min + (x - Math.floor(x)) * (max - min);
     };
 
-    // Random starting position
+    // Random starting position in viewport coordinates
     const startX = random(5, 95);
     const startY = random(5, 95);
 
@@ -56,14 +56,18 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
   return (
     <motion.div
       className="absolute text-4xl select-none pointer-events-none will-change-transform"
+      style={{
+        left: 0,
+        top: 0,
+      }}
       initial={{
-        x: `${animations.startX}%`,
-        y: `${animations.startY}%`,
+        x: `${animations.startX}vw`,
+        y: `${animations.startY}vh`,
         opacity: 0,
       }}
       animate={{
-        x: animations.xPoints.map(x => `${x}%`),
-        y: animations.yPoints.map(y => `${y}%`),
+        x: animations.xPoints.map(x => `${x}vw`),
+        y: animations.yPoints.map(y => `${y}vh`),
         opacity: [0.4, 0.8, 0.6, 1, 0.5, 0.9, 0.7, 0.4],
         scale: animations.scaleRange,
         rotate: [0, animations.rotateAmount / 3, animations.rotateAmount * 0.6, animations.rotateAmount, animations.rotateAmount * 0.6, animations.rotateAmount / 3, 0],
