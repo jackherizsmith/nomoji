@@ -16,15 +16,23 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
       return min + (x - Math.floor(x)) * (max - min);
     };
 
+    // Random starting position across entire arena
+    const startX = random(5, 95);
+    const startY = random(5, 95);
+
+    // Random movement range (20-60% of arena)
+    const moveX = random(-30, 30);
+    const moveY = random(-30, 30);
+
     return {
-      x: random(-40, 40),
-      y: random(-40, 40),
-      duration: random(3, 8),
-      rotateDuration: random(2, 6),
+      startX,
+      startY,
+      moveX,
+      moveY,
+      duration: random(4, 10),
       rotateAmount: random(-360, 360),
-      scaleDuration: random(2, 5),
-      scaleAmount: [1, random(0.7, 1.4), 1],
-      delay: random(0, 2),
+      scaleAmount: [1, random(0.6, 1.5), 1],
+      delay: random(0, 3),
     };
   }, [index]);
 
@@ -32,15 +40,15 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
     <motion.div
       className="absolute text-4xl select-none pointer-events-none"
       style={{
-        left: `${(index % 10) * 10}%`,
-        top: `${Math.floor(index / 10) * 20}%`,
+        left: `${animations.startX}%`,
+        top: `${animations.startY}%`,
         filter: 'saturate(0.8)',
       }}
       initial={{ opacity: 0 }}
       animate={{
         opacity: [0.6, 1, 0.6],
-        x: [0, animations.x, 0],
-        y: [0, animations.y, 0],
+        x: [`0%`, `${animations.moveX}%`, `0%`],
+        y: [`0%`, `${animations.moveY}%`, `0%`],
         scale: animations.scaleAmount,
         rotate: [0, animations.rotateAmount, 0],
         filter: [

@@ -76,7 +76,7 @@ export default function InfiniteMode() {
   }
 
   return (
-    <main className="min-h-screen bg-black relative overflow-hidden">
+    <main className="min-h-screen bg-black relative overflow-hidden flex flex-col">
       <div className="fixed top-0 left-0 right-0 bg-gradient-to-b from-black via-black/95 to-transparent p-8 z-10">
         <div className="text-center text-white">
           <h1 className="text-6xl font-bold mb-2">Nomoji</h1>
@@ -86,10 +86,13 @@ export default function InfiniteMode() {
 
       <Timer startTime={startTime} isRunning={!showResults} />
 
-      <div className="absolute inset-0 pt-32 pb-48">
-        {gameData.displayEmojis.map((emoji: string, index: number) => (
-          <AnimatedEmoji key={index} emoji={emoji} index={index} />
-        ))}
+      {/* Animated Emojis Arena */}
+      <div className="flex-1 relative" style={{ marginTop: '180px', marginBottom: '220px' }}>
+        <div className="absolute inset-0">
+          {gameData.displayEmojis.map((emoji: string, index: number) => (
+            <AnimatedEmoji key={index} emoji={emoji} index={index} />
+          ))}
+        </div>
       </div>
 
       <GuessButtons
