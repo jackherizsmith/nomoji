@@ -10,10 +10,12 @@ interface AnimatedEmojiProps {
 
 export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
   const animations = useMemo(() => {
-    const seed = index * 12345;
+    // Create a proper seeded random generator that produces different values
+    let seed = index * 9301 + 49297;
     const random = (min: number, max: number) => {
-      const x = Math.sin(seed + index) * 10000;
-      return min + (x - Math.floor(x)) * (max - min);
+      seed = (seed * 9301 + 49297) % 233280;
+      const rnd = seed / 233280;
+      return min + rnd * (max - min);
     };
 
     // Random starting position in viewport coordinates
