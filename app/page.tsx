@@ -21,6 +21,7 @@ export default function Home() {
   const [isSuccess, setIsSuccess] = useState(false);
   const [correctAnswer, setCorrectAnswer] = useState('');
   const [timeMs, setTimeMs] = useState<number | null>(null);
+  const [hasCompleted, setHasCompleted] = useState(false);
 
   useEffect(() => {
     loadGame();
@@ -45,6 +46,25 @@ export default function Home() {
     const response = await fetch('/api/daily-game');
     const data = await response.json();
     setGameData(data);
+
+    // Check if user has already completed this game
+    const completedKey = `nomoji_completed_${data.gameId}`;
+    const completedData = localStorage.getItem(completedKey);
+
+    if (completedData) {
+      try {
+        const { isSuccess, timeMs, correctAnswer, guesses } = JSON.parse(completedData);
+        setHasCompleted(true);
+        setIsSuccess(isSuccess);
+        setTimeMs(timeMs);
+        setCorrectAnswer(correctAnswer);
+        setGuesses(guesses);
+        setShowResults(true);
+        return;
+      } catch (e) {
+        // Invalid saved data, ignore
+      }
+    }
 
     // Check if there's a saved timer for this game
     const savedTimer = localStorage.getItem('nomoji_daily_timer');
@@ -94,8 +114,20 @@ export default function Home() {
     setIsSuccess(result.isSuccess);
 
     if (result.isSuccess || newGuesses.length >= 2) {
-      setTimeMs(result.isSuccess ? elapsed : null);
+      const finalTimeMs = result.isSuccess ? elapsed : null;
+      setTimeMs(finalTimeMs);
       setShowResults(true);
+      setHasCompleted(true);
+
+      // Save completion data to localStorage
+      const completedKey = `nomoji_completed_${gameData.gameId}`;
+      localStorage.setItem(completedKey, JSON.stringify({
+        isSuccess: result.isSuccess,
+        timeMs: finalTimeMs,
+        correctAnswer: result.correctAnswer,
+        guesses: newGuesses,
+      }));
+
       // Clear the saved timer when game is completed
       localStorage.removeItem('nomoji_daily_timer');
     }
@@ -159,6 +191,16 @@ export default function Home() {
       >
         Infinite Mode →
       </a>
+
+      {/* See Results Button - shown when user has completed but results are closed */}
+      {hasCompleted && !showResults && (
+        <button
+          onClick={() => setShowResults(true)}
+          className="fixed bottom-8 right-8 bg-white/20 hover:bg-white/30 text-white px-6 py-3 rounded-xl border-2 border-white/40 hover:border-white transition-all z-20 backdrop-blur-sm"
+        >
+          See Results
+        </button>
+      )}
     </main>
   );
 }
