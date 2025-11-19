@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
-import { useEffect, useState } from 'react';
-import { AnimatedEmoji } from '@/components/AnimatedEmoji';
-import { GuessButtons } from '@/components/GuessButtons';
-import { Timer } from '@/components/Timer';
-import { ResultsScreen } from '@/components/ResultsScreen';
-import { getUserId, getSessionId } from '@/lib/user-id';
+import { useEffect, useState } from "react";
+import { AnimatedEmoji } from "@/components/AnimatedEmoji";
+import { GuessButtons } from "@/components/GuessButtons";
+import { Timer } from "@/components/Timer";
+import { ResultsScreen } from "@/components/ResultsScreen";
+import { getUserId, getSessionId } from "@/lib/user-id";
 
 interface GameData {
   gameId: string;
@@ -19,7 +19,7 @@ export default function Home() {
   const [guesses, setGuesses] = useState<string[]>([]);
   const [showResults, setShowResults] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
-  const [correctAnswer, setCorrectAnswer] = useState('');
+  const [correctAnswer, setCorrectAnswer] = useState("");
   const [timeMs, setTimeMs] = useState<number | null>(null);
 
   useEffect(() => {
@@ -32,22 +32,25 @@ export default function Home() {
 
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      localStorage.setItem('nomoji_daily_timer', JSON.stringify({
-        gameId: gameData.gameId,
-        elapsedMs: elapsed,
-      }));
+      localStorage.setItem(
+        "nomoji_daily_timer",
+        JSON.stringify({
+          gameId: gameData.gameId,
+          elapsedMs: elapsed,
+        })
+      );
     }, 1000);
 
     return () => clearInterval(interval);
   }, [gameData, startTime, showResults]);
 
   const loadGame = async () => {
-    const response = await fetch('/api/daily-game');
+    const response = await fetch("/api/daily-game");
     const data = await response.json();
     setGameData(data);
 
     // Check if there's a saved timer for this game
-    const savedTimer = localStorage.getItem('nomoji_daily_timer');
+    const savedTimer = localStorage.getItem("nomoji_daily_timer");
     if (savedTimer) {
       try {
         const { gameId, elapsedMs } = JSON.parse(savedTimer);
@@ -63,7 +66,7 @@ export default function Home() {
 
     // New game or no saved timer
     setStartTime(Date.now());
-    localStorage.removeItem('nomoji_daily_timer');
+    localStorage.removeItem("nomoji_daily_timer");
   };
 
   const handleGuess = async (emoji: string) => {
@@ -74,14 +77,14 @@ export default function Home() {
 
     const elapsed = Date.now() - startTime;
 
-    const response = await fetch('/api/submit-guess', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+    const response = await fetch("/api/submit-guess", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         userId: getUserId(),
         sessionId: getSessionId(),
         gameId: gameData.gameId,
-        gameType: 'DAILY',
+        gameType: "DAILY",
         guesses: newGuesses,
         timeMs: elapsed,
         selectedEmoji: emoji,
@@ -97,7 +100,7 @@ export default function Home() {
       setTimeMs(result.isSuccess ? elapsed : null);
       setShowResults(true);
       // Clear the saved timer when game is completed
-      localStorage.removeItem('nomoji_daily_timer');
+      localStorage.removeItem("nomoji_daily_timer");
     }
   };
 
@@ -126,7 +129,7 @@ export default function Home() {
       <Timer startTime={startTime} isRunning={!showResults} />
 
       {/* Animated Emojis Arena */}
-      <div className="relative" style={{ marginTop: '180px' }}>
+      <div className="relative overflow-hidden" style={{ marginTop: "180px" }}>
         <div className="absolute inset-0">
           {gameData.displayEmojis.map((emoji, index) => (
             <AnimatedEmoji key={index} emoji={emoji} index={index} />

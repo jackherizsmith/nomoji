@@ -87,7 +87,7 @@ export default function InfiniteMode() {
       <Timer startTime={startTime} isRunning={!showResults} />
 
       {/* Animated Emojis Arena */}
-      <div className="relative" style={{ marginTop: '180px' }}>
+      <div className="relative overflow-hidden" style={{ marginTop: '180px' }}>
         <div className="absolute inset-0">
           {gameData.displayEmojis.map((emoji: string, index: number) => (
             <AnimatedEmoji key={index} emoji={emoji} index={index} />
