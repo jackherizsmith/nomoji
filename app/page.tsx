@@ -181,6 +181,7 @@ export default function Home() {
           timeMs={timeMs}
           correctAnswer={correctAnswer}
           gameType="DAILY"
+          onClose={hasCompleted ? () => setShowResults(false) : undefined}
         />
       )}
 
