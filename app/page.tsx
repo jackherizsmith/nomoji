@@ -155,7 +155,7 @@ export default function Home() {
       </div>
 
       {/* Timer */}
-      <Timer startTime={startTime} isRunning={!showResults} />
+      <Timer startTime={startTime} isRunning={!hasCompleted} />
 
       {/* Animated Emojis Arena */}
       <div className="relative" style={{ marginTop: '180px' }}>
