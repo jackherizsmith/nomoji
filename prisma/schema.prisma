@@ -1,0 +1,49 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DailyGame {
+  id          String   @id @default(uuid())
+  date        DateTime @unique @db.Date
+  emojis      String[] // Array of 3 emojis
+  missingEmoji String  // The one that's missing
+  createdAt   DateTime @default(now())
+
+  attempts    GameAttempt[]
+
+  @@index([date])
+}
+
+model GameAttempt {
+  id          String   @id @default(uuid())
+  userId      String   // UUID from localStorage
+  sessionId   String   // Session identifier
+  gameId      String?  // NULL for infinite mode
+  gameType    GameType
+  timeMs      Int?     // NULL if DNF
+  guesses     String[] // Array of guessed emojis
+  isSuccess   Boolean
+  createdAt   DateTime @default(now())
+
+  dailyGame   DailyGame? @relation(fields: [gameId], references: [id])
+
+  @@index([userId])
+  @@index([gameId])
+  @@index([createdAt])
+}
+
+enum GameType {
+  DAILY
+  INFINITE
+}
