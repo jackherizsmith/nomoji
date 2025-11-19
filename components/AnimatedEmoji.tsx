@@ -21,7 +21,7 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
     const startY = random(5, 95);
 
     // Create multiple waypoints for bouncing movement
-    const numPoints = 8; // Number of bounce points
+    const numPoints = 6;
     const xPoints = [startX];
     const yPoints = [startY];
 
@@ -30,39 +30,51 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
       yPoints.push(random(5, 95));
     }
 
+    // Close the loop by returning to start
+    xPoints.push(startX);
+    yPoints.push(startY);
+
     return {
       startX,
       startY,
-      xPoints: xPoints.map(x => `${x}%`),
-      yPoints: yPoints.map(y => `${y}%`),
-      duration: random(15, 30),
+      xPoints,
+      yPoints,
+      duration: random(20, 40),
       rotateAmount: random(-720, 720),
-      scaleAmount: [1, random(0.5, 1.6), random(0.6, 1.4), 1],
-      delay: random(0, 5),
+      scaleRange: [
+        1,
+        random(0.5, 1.7),
+        random(0.6, 1.3),
+        random(0.7, 1.5),
+        random(0.5, 1.6),
+        1
+      ],
+      delay: random(0, 8),
     };
   }, [index]);
 
   return (
     <motion.div
       className="absolute text-4xl select-none pointer-events-none will-change-transform"
-      style={{
-        left: animations.xPoints[0],
-        top: animations.yPoints[0],
-        filter: 'saturate(0.8)',
+      initial={{
+        x: `${animations.startX}%`,
+        y: `${animations.startY}%`,
+        opacity: 0,
       }}
-      initial={{ opacity: 0 }}
       animate={{
-        opacity: [0.5, 0.9, 0.7, 1, 0.6, 0.8, 1, 0.5],
-        left: animations.xPoints,
-        top: animations.yPoints,
-        scale: animations.scaleAmount,
-        rotate: [0, animations.rotateAmount / 2, animations.rotateAmount, animations.rotateAmount / 2, 0],
+        x: animations.xPoints.map(x => `${x}%`),
+        y: animations.yPoints.map(y => `${y}%`),
+        opacity: [0.4, 0.8, 0.6, 1, 0.5, 0.9, 0.7, 0.4],
+        scale: animations.scaleRange,
+        rotate: [0, animations.rotateAmount / 3, animations.rotateAmount * 0.6, animations.rotateAmount, animations.rotateAmount * 0.6, animations.rotateAmount / 3, 0],
         filter: [
-          'saturate(0.4) hue-rotate(0deg)',
-          'saturate(1.2) hue-rotate(90deg)',
-          'saturate(1.8) hue-rotate(180deg)',
-          'saturate(1.2) hue-rotate(270deg)',
-          'saturate(0.4) hue-rotate(360deg)',
+          'saturate(0.3) hue-rotate(0deg) brightness(1.1)',
+          'saturate(1.3) hue-rotate(60deg) brightness(0.9)',
+          'saturate(1.8) hue-rotate(120deg) brightness(1.2)',
+          'saturate(1.5) hue-rotate(180deg) brightness(0.8)',
+          'saturate(1.9) hue-rotate(240deg) brightness(1.1)',
+          'saturate(1.2) hue-rotate(300deg) brightness(0.9)',
+          'saturate(0.3) hue-rotate(360deg) brightness(1.1)',
         ],
       }}
       transition={{
