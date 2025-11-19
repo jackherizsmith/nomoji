@@ -19,8 +19,9 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
     };
 
     // Random starting position in viewport coordinates
+    // X: 5-95% of width, Y: 15-70% to keep above bottom buttons
     const startX = random(5, 95);
-    const startY = random(5, 95);
+    const startY = random(15, 70);
 
     // Create multiple waypoints for bouncing movement
     const numPoints = 6;
@@ -29,7 +30,7 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
 
     for (let i = 0; i < numPoints; i++) {
       xPoints.push(random(5, 95));
-      yPoints.push(random(5, 95));
+      yPoints.push(random(15, 70));
     }
 
     // Close the loop by returning to start
@@ -51,7 +52,6 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
         random(0.5, 1.6),
         1
       ],
-      delay: random(0, 8),
     };
   }, [index]);
 
@@ -87,7 +87,6 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
         duration: animations.duration,
         repeat: Infinity,
         ease: 'linear',
-        delay: animations.delay,
       }}
     >
       {emoji}
