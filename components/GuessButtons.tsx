@@ -11,8 +11,8 @@ interface GuessButtonsProps {
 
 export function GuessButtons({ emojis, onGuess, disabled, guessedEmojis }: GuessButtonsProps) {
   return (
-    <div className="fixed bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/95 to-transparent p-8">
-      <div className="flex justify-center items-center gap-6 max-w-2xl mx-auto">
+    <div className="bg-gradient-to-t from-black via-black/95 to-transparent p-4">
+      <div className="flex justify-center items-center gap-4 max-w-xl mx-auto">
         {emojis.map((emoji) => {
           const isGuessed = guessedEmojis.includes(emoji);
 
@@ -22,7 +22,7 @@ export function GuessButtons({ emojis, onGuess, disabled, guessedEmojis }: Guess
               onClick={() => !disabled && onGuess(emoji)}
               disabled={disabled || isGuessed}
               className={`
-                text-6xl p-8 rounded-2xl border-4 transition-all
+                text-3xl p-4 rounded-xl border-2 transition-all
                 ${isGuessed
                   ? 'border-red-500 opacity-50 cursor-not-allowed bg-red-500/20'
                   : 'border-white hover:border-yellow-400 hover:scale-110 bg-white/10 hover:bg-white/20'
@@ -38,7 +38,7 @@ export function GuessButtons({ emojis, onGuess, disabled, guessedEmojis }: Guess
         })}
       </div>
 
-      <div className="text-center mt-4 text-white/60 text-sm">
+      <div className="text-center mt-2 text-white/60 text-xs">
         Guesses remaining: {2 - guessedEmojis.length}
       </div>
     </div>
