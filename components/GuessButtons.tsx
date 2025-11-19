@@ -1,6 +1,6 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
+import { motion } from "framer-motion";
 
 interface GuessButtonsProps {
   emojis: string[];
@@ -9,7 +9,12 @@ interface GuessButtonsProps {
   guessedEmojis: string[];
 }
 
-export function GuessButtons({ emojis, onGuess, disabled, guessedEmojis }: GuessButtonsProps) {
+export function GuessButtons({
+  emojis,
+  onGuess,
+  disabled,
+  guessedEmojis,
+}: GuessButtonsProps) {
   return (
     <div className="bg-gradient-to-t from-black via-black/95 to-transparent p-4">
       <div className="flex justify-center items-center gap-4 max-w-xl mx-auto">
@@ -23,11 +28,12 @@ export function GuessButtons({ emojis, onGuess, disabled, guessedEmojis }: Guess
               disabled={disabled || isGuessed}
               className={`
                 text-3xl p-4 rounded-xl border-2 transition-all
-                ${isGuessed
-                  ? 'border-red-500 opacity-50 cursor-not-allowed bg-red-500/20'
-                  : 'border-white hover:border-yellow-400 hover:scale-110 bg-white/10 hover:bg-white/20'
+                ${
+                  isGuessed
+                    ? "border-red-500 opacity-50 cursor-not-allowed bg-red-500/20"
+                    : "border-white hover:border-yellow-400 hover:scale-110 bg-white/10 hover:bg-white/20"
                 }
-                ${disabled && !isGuessed ? 'opacity-50 cursor-not-allowed' : ''}
+                ${disabled && !isGuessed ? "opacity-50 cursor-not-allowed" : ""}
               `}
               whileHover={!disabled && !isGuessed ? { scale: 1.1 } : {}}
               whileTap={!disabled && !isGuessed ? { scale: 0.95 } : {}}

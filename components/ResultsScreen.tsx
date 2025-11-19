@@ -1,23 +1,30 @@
-'use client';
+"use client";
 
-import { motion } from 'framer-motion';
-import { ShareButton } from './ShareButton';
+import { motion } from "framer-motion";
+import { ShareButton } from "./ShareButton";
 
 interface ResultsScreenProps {
   isSuccess: boolean;
   timeMs: number | null;
   correctAnswer: string;
-  gameType: 'DAILY' | 'INFINITE';
+  gameType: "DAILY" | "INFINITE";
   onPlayAgain?: () => void;
   onClose?: () => void;
 }
 
-export function ResultsScreen({ isSuccess, timeMs, correctAnswer, gameType, onPlayAgain, onClose }: ResultsScreenProps) {
+export function ResultsScreen({
+  isSuccess,
+  timeMs,
+  correctAnswer,
+  gameType,
+  onPlayAgain,
+  onClose,
+}: ResultsScreenProps) {
   const formatTime = (ms: number | null) => {
-    if (ms === null) return 'DNF';
+    if (ms === null) return "DNF";
     const seconds = Math.floor(ms / 1000);
     const milliseconds = Math.floor((ms % 1000) / 10);
-    return `${seconds}.${milliseconds.toString().padStart(2, '0')}s`;
+    return `${seconds}.${milliseconds.toString().padStart(2, "0")}s`;
   };
 
   return (
@@ -41,33 +48,29 @@ export function ResultsScreen({ isSuccess, timeMs, correctAnswer, gameType, onPl
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ type: 'spring', duration: 0.5 }}
+          transition={{ type: "spring", duration: 0.5 }}
           className="text-8xl mb-8"
         >
-          {isSuccess ? '🎉' : '😢'}
+          {isSuccess ? "🎉" : "😢"}
         </motion.div>
 
         <h2 className="text-5xl font-bold">
-          {isSuccess ? 'Well done!' : 'Not quite!'}
+          {isSuccess ? "Well done!" : "Not quite!"}
         </h2>
 
         <div className="space-y-4">
-          <p className="text-2xl text-white/80">
-            The missing emoji was:
-          </p>
+          <p className="text-2xl text-white/80">The missing emoji was:</p>
           <div className="text-9xl">{correctAnswer}</div>
         </div>
 
-        <div className="text-6xl font-mono">
-          {formatTime(timeMs)}
-        </div>
+        <div className="text-6xl font-mono">{formatTime(timeMs)}</div>
 
-        {gameType === 'DAILY' && (
+        {gameType === "DAILY" && (
           <ShareButton time={formatTime(timeMs)} isSuccess={isSuccess} />
         )}
 
         <div className="flex gap-4 justify-center">
-          {gameType === 'INFINITE' && onPlayAgain && (
+          {gameType === "INFINITE" && onPlayAgain && (
             <button
               onClick={onPlayAgain}
               className="px-8 py-4 bg-white text-black rounded-lg text-xl font-bold hover:bg-yellow-400 transition-colors"
@@ -76,7 +79,7 @@ export function ResultsScreen({ isSuccess, timeMs, correctAnswer, gameType, onPl
             </button>
           )}
 
-          {gameType === 'DAILY' && (
+          {gameType === "DAILY" && (
             <a
               href="/infinite"
               className="px-8 py-4 bg-white/20 hover:bg-white/30 text-white rounded-lg text-xl font-bold border-2 border-white/40 hover:border-white transition-all"
@@ -84,15 +87,6 @@ export function ResultsScreen({ isSuccess, timeMs, correctAnswer, gameType, onPl
               Infinite Mode →
             </a>
           )}
-        </div>
-
-        <div className="pt-8">
-          <a
-            href="/"
-            className="text-white/60 hover:text-white underline"
-          >
-            {gameType === 'INFINITE' ? '← Daily Mode' : 'Back to Home'}
-          </a>
         </div>
       </div>
     </motion.div>
