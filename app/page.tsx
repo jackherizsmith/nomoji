@@ -26,11 +26,44 @@ export default function Home() {
     loadGame();
   }, []);
 
+  // Save elapsed time to localStorage every second
+  useEffect(() => {
+    if (!gameData || showResults) return;
+
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      localStorage.setItem('nomoji_daily_timer', JSON.stringify({
+        gameId: gameData.gameId,
+        elapsedMs: elapsed,
+      }));
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [gameData, startTime, showResults]);
+
   const loadGame = async () => {
     const response = await fetch('/api/daily-game');
     const data = await response.json();
     setGameData(data);
+
+    // Check if there's a saved timer for this game
+    const savedTimer = localStorage.getItem('nomoji_daily_timer');
+    if (savedTimer) {
+      try {
+        const { gameId, elapsedMs } = JSON.parse(savedTimer);
+        // If it's the same game, restore the timer
+        if (gameId === data.gameId) {
+          setStartTime(Date.now() - elapsedMs);
+          return;
+        }
+      } catch (e) {
+        // Invalid saved data, ignore
+      }
+    }
+
+    // New game or no saved timer
     setStartTime(Date.now());
+    localStorage.removeItem('nomoji_daily_timer');
   };
 
   const handleGuess = async (emoji: string) => {
@@ -63,6 +96,8 @@ export default function Home() {
     if (result.isSuccess || newGuesses.length >= 2) {
       setTimeMs(result.isSuccess ? elapsed : null);
       setShowResults(true);
+      // Clear the saved timer when game is completed
+      localStorage.removeItem('nomoji_daily_timer');
     }
   };
 
