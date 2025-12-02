@@ -5,7 +5,6 @@ import { AnimatedEmoji } from '@/components/AnimatedEmoji';
 import { GuessButtons } from '@/components/GuessButtons';
 import { Timer } from '@/components/Timer';
 import { ResultsScreen } from '@/components/ResultsScreen';
-import { getUserId, getSessionId } from '@/lib/user-id';
 import { generateGameEmojis } from '@/lib/emoji-generator';
 
 export default function InfiniteMode() {
@@ -44,23 +43,6 @@ export default function InfiniteMode() {
     if (success || newGuesses.length >= 2) {
       setTimeMs(success ? elapsed : null);
       setShowResults(true);
-
-      // Submit to database (no gameId for infinite mode)
-      await fetch('/api/submit-guess', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          userId: getUserId(),
-          sessionId: getSessionId(),
-          gameId: null,
-          gameType: 'INFINITE',
-          guesses: newGuesses,
-          timeMs: success ? elapsed : null,
-          selectedEmoji: emoji,
-          isSuccess: success,
-          correctAnswer: gameData.missingEmoji,
-        }),
-      });
     }
   };
 

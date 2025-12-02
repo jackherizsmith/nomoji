@@ -53,45 +53,71 @@ export function generateGameEmojis(): {
   };
 }
 
-export function generateSeededGameEmojis(seed: string): {
-  allThreeEmojis: string[];
-  missingEmoji: string;
-  displayEmojis: string[];
-} {
-  // Simple seeded random for daily consistency
+// Fisher-Yates shuffle with seeded random
+function seededShuffle<T>(array: T[], random: () => number): T[] {
+  const result = [...array];
+  for (let i = result.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    [result[i], result[j]] = [result[j], result[i]];
+  }
+  return result;
+}
+
+// Create a seeded random number generator
+function createSeededRandom(seed: string): () => number {
   let hash = 0;
   for (let i = 0; i < seed.length; i++) {
     hash = ((hash << 5) - hash) + seed.charCodeAt(i);
     hash = hash & hash;
   }
+  // Make sure we start with a positive number
+  hash = Math.abs(hash);
 
-  const seededRandom = () => {
-    hash = (hash * 9301 + 49297) % 233280;
-    return hash / 233280;
+  return () => {
+    hash = (hash * 1103515245 + 12345) & 0x7fffffff;
+    return hash / 0x7fffffff;
   };
+}
 
-  const shuffled = [...EMOJI_POOL].sort(() => seededRandom() - 0.5);
+export function generateSeededGameEmojis(seed: string, round: number = 1): {
+  allThreeEmojis: string[];
+  missingEmoji: string;
+  displayEmojis: string[];
+} {
+  // Include round number in the seed to get different games per round
+  const fullSeed = `${seed}-round-${round}`;
+  const seededRandom = createSeededRandom(fullSeed);
+
+  // Shuffle emoji pool using Fisher-Yates (consistent results)
+  const shuffled = seededShuffle(EMOJI_POOL, seededRandom);
   const allThreeEmojis = shuffled.slice(0, 3);
 
+  // Pick one to be missing
   const missingIndex = Math.floor(seededRandom() * 3);
   const missingEmoji = allThreeEmojis[missingIndex];
 
+  // Get the two present emojis
   const presentEmojis = allThreeEmojis.filter((_, i) => i !== missingIndex);
   const otherEmojis = shuffled.slice(3);
 
+  // Build display emojis array
   const displayEmojis: string[] = [];
+
+  // Add the 2 present emojis
   displayEmojis.push(presentEmojis[0], presentEmojis[1]);
 
+  // Fill rest with random emojis from pool (excluding all 3 game emojis)
   while (displayEmojis.length < 50) {
-    const randomEmoji = otherEmojis[Math.floor(seededRandom() * otherEmojis.length)];
-    displayEmojis.push(randomEmoji);
+    const idx = Math.floor(seededRandom() * otherEmojis.length);
+    displayEmojis.push(otherEmojis[idx]);
   }
 
-  displayEmojis.sort(() => seededRandom() - 0.5);
+  // Shuffle display emojis
+  const shuffledDisplay = seededShuffle(displayEmojis, seededRandom);
 
   return {
     allThreeEmojis,
     missingEmoji,
-    displayEmojis,
+    displayEmojis: shuffledDisplay,
   };
 }

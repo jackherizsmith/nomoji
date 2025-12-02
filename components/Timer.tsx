@@ -24,7 +24,7 @@ export function Timer({ startTime, isRunning }: TimerProps) {
   const ms = Math.floor((elapsedMs % 1000) / 10);
 
   return (
-    <div className="fixed top-8 left-1/2 -translate-x-1/2 text-white text-4xl font-mono bg-black/50 px-6 py-3 rounded-lg backdrop-blur-sm z-20">
+    <div className="fixed top-32 left-1/2 -translate-x-1/2 text-white text-4xl font-mono z-20">
       {seconds}.{ms.toString().padStart(2, '0')}s
     </div>
   );

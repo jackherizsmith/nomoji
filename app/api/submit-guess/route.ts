@@ -1,24 +1,23 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { generateSeededGameEmojis } from '@/lib/emoji-generator';
 
 export async function POST(request: NextRequest) {
   const body = await request.json();
-  const { userId, sessionId, gameId, gameType, guesses, timeMs, selectedEmoji } = body;
+  const { gameId, gameType, selectedEmoji } = body;
 
   // Verify the guess
   let isSuccess = false;
   let correctAnswer = '';
 
   if (gameType === 'DAILY' && gameId) {
-    const dailyGame = await prisma.dailyGame.findUnique({
-      where: { id: gameId },
-    });
+    // gameId format is "YYYY-MM-DD-round" e.g. "2025-12-02-1"
+    const parts = gameId.split('-');
+    const round = parseInt(parts[3], 10);
+    const date = parts.slice(0, 3).join('-');
 
-    if (!dailyGame) {
-      return NextResponse.json({ error: 'Game not found' }, { status: 404 });
-    }
-
-    correctAnswer = dailyGame.missingEmoji;
+    // Regenerate the game from the seed
+    const { missingEmoji } = generateSeededGameEmojis(date, round);
+    correctAnswer = missingEmoji;
     isSuccess = selectedEmoji === correctAnswer;
   } else {
     // Infinite mode - answer sent from client (we trust it for practice mode)
@@ -26,21 +25,8 @@ export async function POST(request: NextRequest) {
     correctAnswer = body.correctAnswer;
   }
 
-  const attempt = await prisma.gameAttempt.create({
-    data: {
-      userId,
-      sessionId,
-      gameId: gameType === 'DAILY' ? gameId : null,
-      gameType,
-      timeMs: isSuccess || guesses.length < 2 ? timeMs : null,
-      guesses,
-      isSuccess,
-    },
-  });
-
   return NextResponse.json({
     isSuccess,
     correctAnswer,
-    attemptId: attempt.id,
   });
 }
