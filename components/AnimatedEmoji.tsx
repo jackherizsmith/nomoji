@@ -70,18 +70,9 @@ export function AnimatedEmoji({ emoji, index }: AnimatedEmojiProps) {
       animate={{
         x: animations.xPoints.map(x => `${x}vw`),
         y: animations.yPoints.map(y => `${y}vh`),
-        opacity: [0.4, 0.8, 0.6, 1, 0.5, 0.9, 0.7, 0.4],
+        opacity: [0.6, 0.9, 0.7, 1, 0.8, 0.95, 0.75, 0.6],
         scale: animations.scaleRange,
         rotate: [0, animations.rotateAmount / 3, animations.rotateAmount * 0.6, animations.rotateAmount, animations.rotateAmount * 0.6, animations.rotateAmount / 3, 0],
-        filter: [
-          'saturate(0.3) hue-rotate(0deg) brightness(1.1)',
-          'saturate(1.3) hue-rotate(60deg) brightness(0.9)',
-          'saturate(1.8) hue-rotate(120deg) brightness(1.2)',
-          'saturate(1.5) hue-rotate(180deg) brightness(0.8)',
-          'saturate(1.9) hue-rotate(240deg) brightness(1.1)',
-          'saturate(1.2) hue-rotate(300deg) brightness(0.9)',
-          'saturate(0.3) hue-rotate(360deg) brightness(1.1)',
-        ],
       }}
       transition={{
         duration: animations.duration,

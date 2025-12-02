@@ -1,36 +1,23 @@
-import { NextResponse } from 'next/server';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
 import { generateSeededGameEmojis } from '@/lib/emoji-generator';
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const round = parseInt(searchParams.get('round') || '1', 10);
+
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  let dailyGame = await prisma.dailyGame.findUnique({
-    where: { date: today },
-  });
-
-  if (!dailyGame) {
-    // Generate today's game if it doesn't exist
-    const seed = today.toISOString().split('T')[0];
-    const { allThreeEmojis, missingEmoji } = generateSeededGameEmojis(seed);
-
-    dailyGame = await prisma.dailyGame.create({
-      data: {
-        date: today,
-        emojis: allThreeEmojis,
-        missingEmoji,
-      },
-    });
-  }
-
-  // Generate display emojis (don't send from DB for security)
+  // Use date as seed for consistent daily games
   const seed = today.toISOString().split('T')[0];
-  const { displayEmojis } = generateSeededGameEmojis(seed);
+  const { allThreeEmojis, displayEmojis } = generateSeededGameEmojis(seed, round);
 
   return NextResponse.json({
-    gameId: dailyGame.id,
-    emojis: dailyGame.emojis,
+    gameId: `${seed}-${round}`, // Include round in game ID
+    date: seed,
+    round,
+    totalRounds: 3,
+    emojis: allThreeEmojis,
     displayEmojis,
   });
 }
